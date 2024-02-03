@@ -6,6 +6,7 @@ import java.util.Map;
 import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -29,30 +30,21 @@ public class Services {
     	return this.inforRepository.save(newInfo);
     }
     
-    public org.springframework.data.domain.Page<Infor>  listing(String q, int page, int limit) throws Exception {
+    public org.springframework.data.domain.Page<Infor>  listing(String q, int page, int limit, boolean isPage) throws Exception {
     	
-    	//page 2 and list 3 it is static of add page
-//    	return this.inforRepository.findAll(PageRequest.of(2, 3));
+    	//just add isPage for list all cover page and limit and function of unpage is cover all if it true it show page and limit is it false it show all
     	
-    	
-    	//page 2 and list 3 with sort
-//    	return this.inforRepository.findAll(PageRequest.of(2, 3, Sort.by(Sort.Direction.DESC, "id")));
-    	
-    	
-    	//page 2 and list 3 use dynamic of page and q == "" it mean it search all
-//    	if(q == null || q.equals("")) {
-//    		return this.inforRepository.findAllListByNameContainingIgnoreCase(PageRequest.of(2, 5, Sort.by(Sort.Direction.DESC, "id")), "");
-//    	}else {
-//    		return this.inforRepository.findAllListByNameContainingIgnoreCase(PageRequest.of(2, 5, Sort.by(Sort.Direction.DESC, "id")), q);
-//    	}
+    	Pageable pageable;
+    	if(isPage) pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "id"));
+    	else pageable = Pageable.unpaged();
     	
     	if(page <=0 || limit <=0 ) throw new Exception("Invalid Page");
     	
     	// replace with dynamic of page and limit
     	if(q == null || q.equals("")) {
-    		return this.inforRepository.findAllListByNameContainingIgnoreCase(PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id")), "");
+    		return this.inforRepository.findAllListByNameContainingIgnoreCase(pageable, "");
     	}else {
-    		return this.inforRepository.findAllListByNameContainingIgnoreCase(PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "id")), q);
+    		return this.inforRepository.findAllListByNameContainingIgnoreCase(pageable, q);
     	}
     	
     }
