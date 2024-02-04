@@ -1,6 +1,7 @@
 package pagination.page_limit.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,11 @@ public  class Controller {
     @GetMapping
     public ResponseEntity<List<InforResponse>> listingData(@RequestParam(name="q",required = false) String q,
     		@RequestParam(name="page") int page,
-    		@RequestParam(name="limit") int limit
+    		@RequestParam(name="limit") int limit,
+    		@RequestParam(name="isPage", required = false, defaultValue = "true") String isPage,
+    		@RequestParam(name="sort", required = false, defaultValue = "id:desc") String sort
     		) throws Exception{
-    	List<InforResponse> newList = this.serviceInfor.listing(q, page, limit).stream().map(InforResponse::responseMethod).toList();
+    	List<InforResponse> newList = this.serviceInfor.listing(q, page, limit, Objects.equals(isPage, "true"), sort ).stream().map(InforResponse::responseMethod).toList();
     	return ResponseEntity.ok(newList);
     }
     
